@@ -9,15 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.code.zxs.auth</groupId>
-    <artifactId>auth-client</artifactId>
+    <artifactId>auth-component</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.code.zxs.auth</groupId>
-            <artifactId>auth-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 
 </project>

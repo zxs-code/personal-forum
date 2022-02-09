@@ -69,7 +69,12 @@ public class RsaUtils {
      */
     public static void generateKey(String publicKeyFilename, String privateKeyFilename, String secret) throws Exception {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        SecureRandom secureRandom = new SecureRandom(secret.getBytes());
+        SecureRandom secureRandom;
+        //没有设置密码使用默认种子
+        if(secret == null)
+            secureRandom = new SecureRandom();
+        else
+            secureRandom = new SecureRandom(secret.getBytes());
         keyPairGenerator.initialize(2048, secureRandom);
         KeyPair keyPair = keyPairGenerator.genKeyPair();
         // 获取公钥并写出

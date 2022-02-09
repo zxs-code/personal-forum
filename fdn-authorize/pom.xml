@@ -17,6 +17,7 @@
         <module>auth-client</module>
         <module>auth-core</module>
         <module>auth-model</module>
+        <module>auth-component</module>
     </modules>
 
 
