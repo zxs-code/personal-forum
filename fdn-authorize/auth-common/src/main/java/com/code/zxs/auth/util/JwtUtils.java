@@ -1,5 +1,6 @@
 package com.code.zxs.auth.util;
 
+import com.code.zxs.auth.config.JwtConfig;
 import io.jsonwebtoken.*;
 
 import java.security.PrivateKey;
@@ -131,55 +132,42 @@ public class JwtUtils {
      * 获取token中存储的信息，token过期会抛出 {@link ExpiredJwtException}
      *
      * @param token     用户请求中的token
-     * @param publicKey 公钥
+     * @param publicKey 公钥字节数组
      * @param type      token中存储信息的类型
      * @return
      */
-    public static <T> T getInfoFromToken(String token, PublicKey publicKey, Class<T> type) {
-        Jws<Claims> claimsJws = parserToken(token, publicKey);
-        Claims body = claimsJws.getBody();
-        T info = body.get(DEFAULT_CLAIM_NAME, type);
-        return info;
+    public static <T> T getInfoFromToken(String token, byte[] publicKey, Class<T> type) throws Exception {
+        return getInfoFromToken(token,DEFAULT_CLAIM_NAME,publicKey,type);
     }
 
     /**
      * 获取token中存储的信息，token过期会抛出 {@link ExpiredJwtException}
      *
      * @param token     用户请求中的token
+     * @param publicKey 公钥
+     * @param type      token中存储信息的类型
+     * @return
+     */
+    public static <T> T getInfoFromToken(String token, PublicKey publicKey, Class<T> type) {
+        return getInfoFromToken(token,DEFAULT_CLAIM_NAME,publicKey,type);
+    }
+
+
+    /**
+     * 获取token中存储的信息，token过期会抛出 {@link ExpiredJwtException}
+     *
+     * @param token     用户请求中的token
+     * @param claimName 信息的key
      * @param publicKey 公钥字节数组
      * @param type      token中存储信息的类型
      * @return
      */
-    public static <T> T getInfoFromToken(String token, byte[] publicKey, Class<T> type) throws Exception {
-        return getInfoFromToken(token, RsaUtils.getPublicKey(publicKey), type);
+    public static <T> T getInfoFromToken(String token, String claimName, byte[] publicKey, Class<T> type) throws Exception {
+        return getInfoFromToken(token, claimName, RsaUtils.getPublicKey(publicKey), type);
     }
 
     /**
-     * 获取过期的token中存储的信息
-     *
-     * @param token     用户请求中的token
-     * @param publicKey 公钥
-     * @param type      token中存储信息的类型
-     * @return
-     */
-    public static <T> T getInfoFromExpiredToken(String token, byte[] publicKey, Class<T> type) throws Exception {
-        return getInfoFromExpiredToken(token, RsaUtils.getPublicKey(publicKey), type);
-    }
-
-    /**
-     * 获取过期的token中存储的信息
-     *
-     * @param token     用户请求中的token
-     * @param publicKey 公钥
-     * @param type      token中存储信息的类型
-     * @return
-     */
-    public static <T> T getInfoFromExpiredToken(String token, PublicKey publicKey, Class<T> type) {
-        return getInfoFromExpiredToken(token, DEFAULT_CLAIM_NAME, publicKey, type);
-    }
-
-    /**
-     * 获取过期的token中存储的信息
+     * 获取token中存储的信息，token过期会抛出 {@link ExpiredJwtException}
      *
      * @param token     用户请求中的token
      * @param claimName 信息的key
@@ -187,33 +175,17 @@ public class JwtUtils {
      * @param type      token中存储信息的类型
      * @return
      */
-    public static <T> T getInfoFromExpiredToken(String token, String claimName, byte[] publicKey, Class<T> type) throws Exception {
-        return getInfoFromExpiredToken(token, claimName, RsaUtils.getPublicKey(publicKey), type);
-    }
-
-    /**
-     * 获取过期的token中存储的信息
-     *
-     * @param token     用户请求中的token
-     * @param claimName 信息的key
-     * @param publicKey 公钥
-     * @param type      token中存储信息的类型
-     * @return
-     */
-    public static <T> T getInfoFromExpiredToken(String token, String claimName, PublicKey publicKey, Class<T> type) {
-        try {
-            Jws<Claims> claimsJws = parserToken(token, publicKey);
-            Claims body = claimsJws.getBody();
-            T info = body.get(claimName, type);
-            return info;
-        } catch (ExpiredJwtException e) {
-            return e.getClaims().get(DEFAULT_CLAIM_NAME, type);
-        }
+    public static <T> T getInfoFromToken(String token, String claimName, PublicKey publicKey, Class<T> type) {
+        Jws<Claims> claimsJws = parserToken(token, publicKey);
+        Claims body = claimsJws.getBody();
+        T info = body.get(claimName, type);
+        return info;
     }
 
 
     /**
      * 获取token的过期时间，token过期会抛出 {@link ExpiredJwtException}
+     *
      * @param token
      * @param publicKey
      * @return
@@ -224,19 +196,11 @@ public class JwtUtils {
         return body.getExpiration();
     }
 
-    /**
-     * 获取过期token的过期时间
-     * @param token
-     * @param publicKey
-     * @return
-     */
-    public static Date getExpirationFromExpiredToken(String token, PublicKey publicKey) {
-        try {
-            Jws<Claims> claimsJws = parserToken(token, publicKey);
-            Claims body = claimsJws.getBody();
-            return body.getExpiration();
-        } catch (ExpiredJwtException e) {
-            return e.getClaims().getExpiration();
-        }
+    public static void main(String[] args) {
+        JwtConfig jwtConfig = new JwtConfig();
+        jwtConfig.init();
+        String token = JwtUtils.generateToken("123", jwtConfig.getPrivateKey(), -100, jwtConfig.getUnit());
+        Jws<Claims> claimsJws = JwtUtils.parserToken(token, jwtConfig.getPublicKey());
     }
+
 }

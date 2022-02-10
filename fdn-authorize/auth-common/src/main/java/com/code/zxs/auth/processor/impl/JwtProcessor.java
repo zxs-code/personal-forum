@@ -3,6 +3,7 @@ package com.code.zxs.auth.processor.impl;
 import com.code.zxs.auth.config.JwtConfig;
 import com.code.zxs.auth.processor.TokenProcessor;
 import com.code.zxs.auth.util.JwtUtils;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,11 @@ import java.util.Map;
 public class JwtProcessor implements TokenProcessor {
     @Autowired
     private JwtConfig jwtConfig;
+
+    public JwtProcessor(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+    }
+
 
     @Override
     public String generateToken(Object info) {
@@ -43,30 +49,42 @@ public class JwtProcessor implements TokenProcessor {
 
     @Override
     public String generateToken(Map<String, Object> infoMap, Integer expire, ChronoUnit unit) {
-        return JwtUtils.generateToken(infoMap, jwtConfig.getPrivateKey(),expire, unit);
+        return JwtUtils.generateToken(infoMap, jwtConfig.getPrivateKey(), expire, unit);
     }
 
     @Override
     public <T> T getInfoFromToken(String token, Class<T> type) {
-        return JwtUtils.getInfoFromExpiredToken(token,jwtConfig.getPublicKey(),type);
+        try {
+            return JwtUtils.getInfoFromToken(token, jwtConfig.getPublicKey(), type);
+        } catch (ExpiredJwtException e) {
+            return e.getClaims().get(JwtUtils.DEFAULT_CLAIM_NAME, type);
+        }
     }
 
 
     @Override
     public <T> T getInfoFromToken(String token, String infoKey, Class<T> type) {
-        return JwtUtils.getInfoFromExpiredToken(token,infoKey,jwtConfig.getPublicKey(),type);
+        try {
+            return JwtUtils.getInfoFromToken(token, infoKey, jwtConfig.getPublicKey(), type);
+        } catch (ExpiredJwtException e) {
+            return e.getClaims().get(infoKey, type);
+        }
     }
 
     @Override
     public Date getTokenExpiration(String token) {
-        return JwtUtils.getExpirationFromExpiredToken(token,jwtConfig.getPublicKey());
+        try {
+            return JwtUtils.getExpirationFromToken(token, jwtConfig.getPublicKey());
+        } catch (ExpiredJwtException e) {
+            return e.getClaims().getExpiration();
+        }
     }
 
     public static void main(String[] args) {
         JwtConfig jwtConfig = new JwtConfig();
         jwtConfig.init();
         String s = JwtUtils.generateToken("123", jwtConfig.getPrivateKey(), -100, ChronoUnit.DAYS);
-        System.out.println(JwtUtils.getExpirationFromExpiredToken(s, jwtConfig.getPublicKey()));
-        System.out.println(JwtUtils.getInfoFromExpiredToken(s, jwtConfig.getPublicKey(), String.class));
+        System.out.println(JwtUtils.getExpirationFromToken(s, jwtConfig.getPublicKey()));
+        System.out.println(JwtUtils.getInfoFromToken(s, jwtConfig.getPublicKey(), String.class));
     }
 }

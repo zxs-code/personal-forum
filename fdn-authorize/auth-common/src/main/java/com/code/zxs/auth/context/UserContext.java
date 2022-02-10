@@ -41,4 +41,11 @@ public class UserContext {
     public static void setUserCreateTimeHolder(Date userCreateTime) {
         userCreateTimeHolder.set(userCreateTime);
     }
+
+    public static void clear(){
+        requestHolder.remove();
+        responseHolder.remove();
+        userIdHolder.remove();
+        userCreateTimeHolder.remove();
+    }
 }
