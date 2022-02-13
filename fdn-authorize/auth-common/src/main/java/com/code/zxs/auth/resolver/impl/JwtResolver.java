@@ -23,7 +23,6 @@ public class JwtResolver implements TokenResolver {
     private String token;
     private JwsHeader header;
     private Claims body;
-    private Key key;
 
     /**
      * @param token
@@ -33,7 +32,6 @@ public class JwtResolver implements TokenResolver {
     public JwtResolver(String token, Key key, boolean expired) {
         log.info("初始化jwt解析器，传入token为{}", token);
         this.token = token;
-        this.key = key;
         try {
             Jws<Claims> claimsJws = JwtUtils.parserToken(token, key);
             this.header = claimsJws.getHeader();
@@ -90,7 +88,4 @@ public class JwtResolver implements TokenResolver {
         return JwtUtils.getInfoFromBody(body, JwtConfig.TOKEN_TYPE_KEY, TokenType.class);
     }
 
-    public Key getKey() {
-        return key;
-    }
 }
