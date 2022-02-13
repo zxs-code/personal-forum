@@ -4,7 +4,7 @@ import com.code.zxs.auth.util.RsaUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -12,11 +12,13 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.time.temporal.ChronoUnit;
 
-@Component
+@Configuration
 @Data
 @Slf4j
 @ConfigurationProperties(prefix = "global.config.jwt")
 public class JwtConfig {
+    public static final String USER_INFO_KEY = "userInfoKey";
+    public static final String TOKEN_TYPE_KEY = "tokenTypeKey";
     /**
      * 公钥文件路径
      */
@@ -65,8 +67,10 @@ public class JwtConfig {
 
             publicKey = RsaUtils.getPublicKey(pubKeyPath);
             privateKey = RsaUtils.getPrivateKey(priKeyPath);
+            log.info("完成jwt密钥对初始化");
         } catch (Exception e) {
             log.error("初始化jwt密钥对失败", e);
         }
     }
+
 }

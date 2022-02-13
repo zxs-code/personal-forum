@@ -1,20 +1,24 @@
 package com.code.zxs.auth.dto;
 
 import com.code.zxs.auth.entity.User;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.Date;
 
-@Getter
-@Setter
+@Data
 public class TokenUserDTO {
 
-    public TokenUserDTO(User user){
+    public TokenUserDTO(User user) {
         id = user.getId();
+        username = user.getUsername();
         createTime = user.getCreateTime();
     }
 
     private String id;
+    private String username;
     private Date createTime;
+
+    public TokenUserDTO() {
+
+    }
 }

@@ -3,6 +3,7 @@ package com.code.zxs.auth.util;
 import com.code.zxs.auth.config.JwtConfig;
 import io.jsonwebtoken.*;
 
+import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.time.ZonedDateTime;
@@ -41,7 +42,7 @@ public class JwtUtils {
         Date issueTime = new Date();
 
         return Jwts.builder()
-                .claim(DEFAULT_CLAIM_NAME, info)
+                .claim(DEFAULT_CLAIM_NAME, JsonUtils.serialize(info))
                 .setIssuedAt(issueTime)
                 .setExpiration(expiration)
                 .signWith(SignatureAlgorithm.RS256, privateKey)
@@ -96,12 +97,30 @@ public class JwtUtils {
     public static String generateToken(Map<String, Object> claimMap, PrivateKey privateKey, Date expiration) {
         Date issueTime = new Date();
 
+        //jjwt无法自动转换复杂类型，手动转成jsonx形式
+        //JJWT only converts simple String, Date, Long, Integer, Short and Byte types automatically
+        for (Map.Entry<String, Object> entry : claimMap.entrySet()) {
+            entry.setValue(JsonUtils.serialize(entry.getValue()));
+        }
         return Jwts.builder()
                 .addClaims(claimMap)
                 .setIssuedAt(issueTime)
                 .setExpiration(expiration)
                 .signWith(SignatureAlgorithm.RS256, privateKey)
                 .compact();
+    }
+
+
+    /**
+     * 密钥解析token
+     *
+     * @param token 用户请求中的token
+     * @param key   密钥
+     * @return
+     * @throws Exception
+     */
+    public static Jws<Claims> parserToken(String token, Key key) {
+        return Jwts.parser().setSigningKey(key).parseClaimsJws(token);
     }
 
     /**
@@ -112,7 +131,7 @@ public class JwtUtils {
      * @return
      * @throws Exception
      */
-    private static Jws<Claims> parserToken(String token, PublicKey publicKey) {
+    public static Jws<Claims> parserToken(String token, PublicKey publicKey) {
         return Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token);
     }
 
@@ -124,7 +143,7 @@ public class JwtUtils {
      * @return
      * @throws Exception
      */
-    private static Jws<Claims> parserToken(String token, byte[] publicKey) throws Exception {
+    public static Jws<Claims> parserToken(String token, byte[] publicKey) throws Exception {
         return parserToken(token, RsaUtils.getPublicKey(publicKey));
     }
 
@@ -137,7 +156,8 @@ public class JwtUtils {
      * @return
      */
     public static <T> T getInfoFromToken(String token, byte[] publicKey, Class<T> type) throws Exception {
-        return getInfoFromToken(token,DEFAULT_CLAIM_NAME,publicKey,type);
+
+        return getInfoFromToken(token, DEFAULT_CLAIM_NAME, publicKey, type);
     }
 
     /**
@@ -149,7 +169,7 @@ public class JwtUtils {
      * @return
      */
     public static <T> T getInfoFromToken(String token, PublicKey publicKey, Class<T> type) {
-        return getInfoFromToken(token,DEFAULT_CLAIM_NAME,publicKey,type);
+        return getInfoFromToken(token, DEFAULT_CLAIM_NAME, publicKey, type);
     }
 
 
@@ -178,8 +198,14 @@ public class JwtUtils {
     public static <T> T getInfoFromToken(String token, String claimName, PublicKey publicKey, Class<T> type) {
         Jws<Claims> claimsJws = parserToken(token, publicKey);
         Claims body = claimsJws.getBody();
-        T info = body.get(claimName, type);
-        return info;
+        String info = body.get(claimName, String.class);
+        return JsonUtils.parse(info, type);
+    }
+
+
+    public static <T> T getInfoFromBody(Claims body, String claimName, Class<T> type) {
+        String info = body.get(claimName, String.class);
+        return JsonUtils.parse(info, type);
     }
 
 
@@ -199,8 +225,9 @@ public class JwtUtils {
     public static void main(String[] args) {
         JwtConfig jwtConfig = new JwtConfig();
         jwtConfig.init();
-        String token = JwtUtils.generateToken("123", jwtConfig.getPrivateKey(), -100, jwtConfig.getUnit());
+        String token = JwtUtils.generateToken("123", jwtConfig.getPrivateKey(), 100, jwtConfig.getUnit());
         Jws<Claims> claimsJws = JwtUtils.parserToken(token, jwtConfig.getPublicKey());
+        System.out.println(claimsJws.getBody().getIssuedAt());
     }
 
 }
