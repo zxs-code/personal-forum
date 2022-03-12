@@ -4,12 +4,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.code.zxs</groupId>
+  <groupId>com.github.code.zxs</groupId>
   <artifactId>personal-forum</artifactId>
   <version>1.0-SNAPSHOT</version>
   <modules>
     <module>sys-core</module>
-    <module>fdn-authorize</module>
+    <module>basic-authorize</module>
     <module>sys-user</module>
   </modules>
   <packaging>pom</packaging>
@@ -24,15 +24,8 @@
     <spring.cloud.alibaba.version>2.2.7.RELEASE</spring.cloud.alibaba.version>
     <common.lang3.version>3.8.1</common.lang3.version>
     <mybatis-plus.version>3.5.1</mybatis-plus.version>
+    <lombok.version>1.18.16</lombok.version>
   </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.16</version>
-    </dependency>
-  </dependencies>
 
   <dependencyManagement>
     <dependencies>
@@ -67,9 +60,13 @@
         <artifactId>mybatis-plus-boot-starter</artifactId>
         <version>${mybatis-plus.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
-
 
   <build>
     <finalName>personal-forum</finalName>
