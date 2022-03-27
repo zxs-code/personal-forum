@@ -20,6 +20,11 @@
         </dependency>
         <dependency>
             <groupId>com.github.code.zxs</groupId>
+            <artifactId>auth-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.code.zxs</groupId>
             <artifactId>core-component</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -1,0 +1,11 @@
+{
+  "groups": [],
+  "properties": [
+    {
+      "name": "global.config.jwt.secret",
+      "type": "java.lang.String",
+      "description": "Description for global.config.jwt.secret."
+    }
+  ],
+  "hints": []
+}
