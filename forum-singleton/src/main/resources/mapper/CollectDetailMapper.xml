@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.code.zxs.resource.mapper.CollectDetailMapper">
+    <insert id="reverseState">
+        UPDATE tb_collect_detail
+        SET state=(state + 1) % 2, update_time = #{update_time}
+        WHERE collect_id = #{collect_id}
+        AND fav_id IN
+        <foreach collection="update_fav_ids" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </insert>
+
+</mapper>

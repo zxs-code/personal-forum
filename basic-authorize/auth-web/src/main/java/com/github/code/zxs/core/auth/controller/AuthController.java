@@ -1,22 +1,21 @@
 package com.github.code.zxs.core.auth.controller;
 
 
+import com.github.code.zxs.core.auth.config.JwtConfig;
+import com.github.code.zxs.core.auth.dto.LoginInfoDTO;
+import com.github.code.zxs.core.auth.dto.TokenInfoDTO;
+import com.github.code.zxs.core.auth.dto.TokenUserDTO;
+import com.github.code.zxs.core.auth.service.AuthService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import java.security.PublicKey;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -33,7 +32,7 @@ public class AuthController {
     @GetMapping("jwt/publicKey")
     public PublicKey getPublicKey() {
         return Optional.ofNullable(jwtConfig).map(JwtConfig::getPublicKey)
-                .orElseThrow(() -> new ConfigNotInitException("Jwt配置未初始化"));
+                .orElseThrow(() -> new IllegalArgumentException("Jwt配置未初始化"));
     }
 
 

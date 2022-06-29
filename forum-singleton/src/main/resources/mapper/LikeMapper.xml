@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.code.zxs.resource.mapper.LikeMapper">
+    <insert id="insertIgnore">
+        INSERT IGNORE INTO tb_like (resource_type,resource_id,state,create_time,update_time,create_by)
+        VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.resourceType}, #{item.resourceId}, #{item.state}, #{item.createTime},
+            #{item.updateTime}, #{item.createBy})
+        </foreach>
+    </insert>
+    <update id="updateBatch">
+        <foreach collection="list" index="index" item="item" separator=";">
+            UPDATE tb_like SET
+            state = #{item.state},
+            update_time = #{item.updateTime}
+            WHERE resource_type = #{item.resourceType} AND
+                  resource_id = #{item.resourceId} AND
+                  create_by = #{item.createBy}
+        </foreach>
+    </update>
+    <insert id="saveOrUpdate">
+        INSERT INTO tb_like (resource_type,resource_id,state,create_time,update_time,create_by)
+        VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.resourceType}, #{item.resourceId}, #{item.state}, #{item.createTime},
+            #{item.updateTime}, #{item.createBy})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        state = VALUES(state),
+        update_time = VALUES(update_time)
+    </insert>
+</mapper>

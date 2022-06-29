@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.code.zxs.resource.mapper.FavoritesMapper">
+    <insert id="incrFavTotal">
+        UPDATE tb_favorites SET total = total + 1
+        WHERE total &lt; max_total AND id IN
+        <foreach collection="fav_ids" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </insert>
+    <insert id="decrFavTotal">
+        UPDATE tb_favorites SET total = total - 1
+        WHERE total &gt; 0 AND id IN
+        <foreach collection="fav_ids" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </insert>
+</mapper>

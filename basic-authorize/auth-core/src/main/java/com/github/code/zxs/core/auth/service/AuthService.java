@@ -1,10 +1,11 @@
 package com.github.code.zxs.core.auth.service;
 
 
+import com.github.code.zxs.core.auth.dto.LoginInfoDTO;
+import com.github.code.zxs.core.auth.dto.TokenInfoDTO;
+import com.github.code.zxs.core.auth.dto.TokenUserDTO;
 
-
-
-
+import java.util.List;
 
 public interface AuthService {
     /**

@@ -10,10 +10,11 @@
     <modules>
         <module>forum-core</module>
         <module>basic-authorize</module>
-        <module>forum-user</module>
         <module>forum-search</module>
         <module>basic-storage</module>
         <module>forum-resource</module>
+        <module>forum-singleton</module>
+        <module>field-data</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -27,6 +28,7 @@
         <spring.cloud.alibaba.version>2.2.7.RELEASE</spring.cloud.alibaba.version>
         <common.lang3.version>3.8.1</common.lang3.version>
         <mybatis-plus.version>3.5.1</mybatis-plus.version>
+        <mysql.version>8.0.11</mysql.version>
         <lombok.version>1.18.16</lombok.version>
         <swagger.version>3.0.0</swagger.version>
     </properties>
@@ -38,21 +40,21 @@
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
-                <scope>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring.cloud.version}</version>
                 <type>pom</type>
-                <scope>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
                 <version>${spring.cloud.alibaba.version}</version>
                 <type>pom</type>
-                <scope>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>io.springfox</groupId>
@@ -73,6 +75,11 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

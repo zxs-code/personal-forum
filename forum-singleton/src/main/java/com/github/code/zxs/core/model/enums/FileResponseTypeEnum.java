@@ -1,0 +1,1 @@
+package com.github.code.zxs.core.model.enums;/** * 本地文件响应类型 - 常量 */public enum FileResponseTypeEnum {    /**     * 不论什么格式的文件都进行下载操作     */    DOWNLOAD,    /**     * 使用浏览器默认处理，浏览器支持预览的格式，则进行预览，不支持的则进行下载     */    DEFAULT;}

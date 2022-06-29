@@ -9,12 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>forum-user</artifactId>
+    <artifactId>forum-userInfo</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>user-core</module>
-        <module>user-model</module>
-        <module>user-web</module>
+        <module>userInfo-core</module>
+        <module>userInfo-model</module>
+        <module>userInfo-web</module>
     </modules>
 
 
