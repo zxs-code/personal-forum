@@ -1,7 +1,6 @@
 package com.github.code.zxs.core.support.cache;
 
 import com.github.code.zxs.core.util.*;
-import com.github.code.zxs.resource.model.entity.PostsData;
 import lombok.Setter;
 import org.redisson.api.RLock;
 import org.redisson.api.RMap;
@@ -21,6 +20,7 @@ public class HashCache<K, V> {
     private final String cacheName;
     private final String keyPrefix;
     private final RedissonClient redissonClient;
+    private final Class<K> kClass;
     private final Class<V> vClass;
     private final Map<String, Class<?>> vClassFieldMap;
     private static final Map<Class<?>, Map<String, Class<?>>> CLASS_PROPERTY_MAP;
@@ -31,10 +31,11 @@ public class HashCache<K, V> {
         CLASS_PROPERTY_MAP = new ConcurrentHashMap<>();
     }
 
-    public HashCache(String cacheName, Class<V> vClass) {
+    public HashCache(String cacheName, Class<K> kClass, Class<V> vClass) {
         this.cacheName = cacheName;
         this.keyPrefix = SCAN + ":" + cacheName;
         this.redissonClient = SpringContextUtils.getBean(RedissonClient.class);
+        this.kClass = kClass;
         this.vClass = vClass;
         CLASS_PROPERTY_MAP.computeIfAbsent(vClass, BeanUtils::resolveFieldMap);
         vClassFieldMap = CLASS_PROPERTY_MAP.get(vClass);
@@ -123,11 +124,11 @@ public class HashCache<K, V> {
         return v;
     }
 
-    public List<PostsData> getAll() {
-        Set<String> keys = RedisUtils.scan(keyPrefix + "*");
-        List<Map<String, Object>> maps = RedisUtils.hMultiEntries(new ArrayList<>(keys));
-        List<PostsData> dataList = maps.stream().map(map -> JsonUtils.parse(map, PostsData.class)).collect(Collectors.toList());
-        return dataList;
+    public Map<K, V> getAll() {
+        List<String> keys = new ArrayList<>(RedisUtils.scan(keyPrefix + "*"));
+        Map<String, Map<String, Object>> entryMap = RedisUtils.hMultiEntries(keys);
+        Map<K, V> collect = entryMap.entrySet().stream().collect(Collectors.toMap(entry -> getKey(entry.getKey()), entry -> mapToValue(entry.getValue())));
+        return collect;
     }
 
     public V get(K key) {
@@ -185,6 +186,16 @@ public class HashCache<K, V> {
             else
                 map.expire(afterWriteExpire, unit);
         }
+    }
+
+    private V mapToValue(Map<String, Object> map) {
+        return JsonUtils.parse(map, vClass);
+    }
+
+    private K getKey(String cacheKey) {
+        return cacheKey.length() <= keyPrefix.length()
+                ? null
+                : JsonUtils.parse(cacheKey.substring(keyPrefix.length() + 1), kClass);
     }
 
     private String getCacheKey(K key) {

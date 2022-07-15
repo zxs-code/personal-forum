@@ -1,5 +1,7 @@
 package com.github.code.zxs.core.model.enums;
 
+import org.springframework.core.convert.converter.Converter;
+
 public interface BaseEnum {
     int getCode();
 
@@ -19,4 +21,14 @@ public interface BaseEnum {
         return null;
     }
 
+
+    enum EnumToIntegerConverter implements Converter<BaseEnum, Integer> {
+
+        INSTANCE;
+
+        @Override
+        public Integer convert(BaseEnum baseEnum) {
+            return baseEnum.getCode();
+        }
+    }
 }

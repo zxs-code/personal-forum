@@ -6,7 +6,6 @@ import com.github.code.zxs.core.support.message.MessageProducer;
 import com.github.code.zxs.resource.model.entity.Like;
 import com.github.code.zxs.resource.model.enums.LikeStateEnum;
 import com.github.code.zxs.resource.service.manager.LikeManager;
-import com.github.code.zxs.resource.support.generator.DistributedIdGenerator;
 import com.github.code.zxs.resource.support.result.LikeResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -20,8 +19,6 @@ public class LikeConsumer {
     private LikeManager likeManager;
     @Autowired
     private MessageProducer producer;
-    @Autowired
-    private DistributedIdGenerator idGenerator;
 
     @KafkaListener(topics = TopicConstant.LIKE_REQUEST, groupId = "database", containerFactory = "batchFactory")
     public void saveInDatabase(List<Like> likes) {
@@ -70,7 +67,7 @@ public class LikeConsumer {
         copy.setId(likeManager.generateId());
         copy.setResourceType(like.getResourceType());
         copy.setResourceId(like.getResourceId());
-        copy.setState(like.getState());
+        copy.setState(state);
         copy.setCreateTime(like.getCreateTime());
         copy.setUpdateTime(like.getUpdateTime());
         copy.setCreateBy(like.getCreateBy());

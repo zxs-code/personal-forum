@@ -54,6 +54,23 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
+    public CommentBO getCommentById(Long id) {
+        Comment comment = commentManager.getCommentById(id);
+        CommentBO commentBO = commentConverter.entity2CommentBo(comment);
+
+        ResourceDTO resourceDTO = new ResourceDTO(id, ResourceTypeEnum.COMMENT);
+        commentBO.setLikes(likeService.count(resourceDTO, LikeStateEnum.LIKE));
+        commentBO.setDislikes(likeService.count(resourceDTO, LikeStateEnum.DISLIKE));
+        //待优化 TODO
+        ReplyDataBO replyDataBO = replyService.rangeReply(new ReplyViewDTO(commentBO.getId(), 0L, 3L));
+        long replyTotal = replyDataBO.getCursor().getTotal();
+        commentBO.setReply(replyTotal);
+        commentBO.setReplies(replyDataBO.getReplies());
+        commentBO.setAuthor(userInfoService.getAuthorBoById(comment.getCreateBy()));
+        return commentBO;
+    }
+
+    @Override
     public CommentDataBO listComment(CommentViewDTO commentViewDTO) {
 
         ResourceDTO resourceDTO = commentViewDTO.getResource();

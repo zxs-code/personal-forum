@@ -1,0 +1,133 @@
+server:
+  port: 9010
+  servlet:
+    session:
+      cookie:
+        http-only: true #禁止js读取cookie信息
+  tomcat:
+    max-swallow-size: 100MB #tomcat的最大吞吐量，需要大于上传文件的最大大小，否则前端无法接收后端返回的json错误。
+spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 50MB
+  jackson:
+    default-property-inclusion: non_null  #json 序列化时忽视null值
+    serialization:
+      write-dates-as-timestamps: true  #返回毫秒值
+  #    date-format: "yyyy-MM-dd HH:mm:ss"
+    time-zone: GMT+8
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      # 连接池最大连接数，默认是 10
+      maximum-pool-size: 60
+      # 链接超时时间，默认 30000(30 秒)
+      connection-timeout: 60000
+      # 空闲连接存活最大时间，默认 600000(10 分钟)
+      idle-timeout: 60000
+      # 连接将被测试活动的最大时间量
+      validation-timeout: 3000
+      # 此属性控制池中连接的最长生命周期，值 0 表示无限生命周期，默认 1800000(30 分钟)
+      max-lifetime: 60000
+      # 连接到数据库时等待的最长时间(秒)
+      login-timeout: 5
+      # 池中维护的最小空闲连接数
+      minimum-idle: 10
+  mvc:
+    throw-exception-if-no-handler-found: true # 404时抛出异常
+  resources:
+    add-mappings: false # 禁止为工程资源文件添加映射
+  redis:
+    host:
+    port:
+    password:
+    database: 0
+    lettuce:
+      pool:
+        max-active: 100 # 连接池最大连接数（使用负值表示没有限制）
+        max-idle: 10 # 连接池中的最大空闲连接
+        min-idle: 10 # 连接池中的最小空闲连接
+        max-wait: 5000ms # 连接池最大阻塞等待时间（使用负值表示没有限制）
+  kafka:
+    bootstrap-servers:
+    producer: # producer 生产者
+      retries: 3 # 重试次数
+      acks: 1 # 应答级别:多少个分区副本备份完成时向生产者发送ack确认(可选0、1、all/-1)
+      batch-size: 16384 # 批量大小
+      buffer-memory: 33554432 # 生产端缓冲区大小
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.github.code.zxs.core.support.serializer.CustomJsonSerializer
+    #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer: # consumer消费者
+      group-id: default-group # 默认的消费组ID
+      enable-auto-commit: true # 是否自动提交offset
+      auto-commit-interval: 1000  # 提交offset延时(接收到消息后多久提交offset)
+
+      # earliest:当各分区下有已提交的offset时，从提交的offset开始消费；无提交的offset时，从头开始消费
+      # latest:当各分区下有已提交的offset时，从提交的offset开始消费；无提交的offset时，消费新产生的该分区下的数据
+      # none:topic各分区都存在已提交的offset时，从offset后开始消费；只要有一个分区不存在已提交的offset，则抛出异常
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: com.github.code.zxs.core.support.serializer.CustomJsonDeserializer
+    #      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    security:
+      protocol: SASL_PLAINTEXT
+    #用于链接带密码的kafka  配置，如果kafka没有密码需要注释掉
+    properties:
+      sasl.mechanism: PLAIN
+      security.protocol: SASL_PLAINTEXT
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="" password="";
+  elasticsearch:
+    rest:
+      connection-timeout: 1s # 连接超时时间
+      username:
+      password:
+      read-timeout: 30s # 读取超时时间
+#      uris: 175.178.92.202:9200 # es rest 接口地址，多个用逗号隔
+      uris: 127.0.0.1:9200 # es rest 接口地址，多个用逗号隔
+jetcache:
+  statIntervalMinutes: 30
+  areaInCacheName: false
+  hidePackages: com.github.code.zxs
+  local:
+    default:
+      type: caffeine
+      limit: 100
+      keyConvertor: fastjson
+      expireAfterWriteInMillis: 120000
+  remote:
+    default:
+      type: redis.lettuce
+      keyConvertor: fastjson
+      valueEncoder: java
+      valueDecoder: java
+      expireAfterWriteInMillis: 1200000
+      uri: redis://${spring.redis.password}@${spring.redis.host}:${spring.redis.port}
+bbs:
+  core:
+    message:
+      instance: kafka
+  storage:
+    type: local
+    base-url: http://localhost:9010/
+    allow-content-type: png,gif,jpeg,doc,docx,xls,xlsx,pdf
+    local:
+      base-path: D:\forum
+  auth:
+    email:
+      account:
+      account-name: 个人论坛
+      password:
+      host:
+      port:
+
+mybatis-plus:
+  type-enums-package: com.github.code.zxs.**.enums  #枚举类处理
+  configuration:
+#    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler #枚举次序处理器，次序从0开始
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+

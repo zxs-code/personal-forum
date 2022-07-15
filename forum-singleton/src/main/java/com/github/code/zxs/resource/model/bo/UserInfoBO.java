@@ -27,8 +27,4 @@ public class UserInfoBO {
     private UserStateEnum state;
     private Date createTime;
     private Date updateTime;
-    /**
-     * 登录过期时间
-     */
-    private Date expireAt;
 }

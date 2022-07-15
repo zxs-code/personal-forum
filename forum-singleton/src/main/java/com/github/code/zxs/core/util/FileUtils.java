@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,6 +24,7 @@ import java.util.Date;
 
 @Slf4j
 public class FileUtils extends FileUtil {
+    public static final String[] UNITS = new String[]{"B", "KB", "MB", "GB", "TB", "PB"};
 
     /**
      * 文件下载，单线程，直接传
@@ -197,7 +197,9 @@ public class FileUtils extends FileUtil {
         }
     }
 
-    public static String getSuffix(@NotNull String filename) {
+    public static String getSuffix(String filename) {
+        if (filename == null)
+            return "";
         int index = filename.lastIndexOf('.');
         return index == -1 ? "" : filename.substring(index);
     }
@@ -330,6 +332,22 @@ public class FileUtils extends FileUtil {
     public static void copyFileIfAbsent(InputStream in, File file) throws IOException {
         if (!file.exists())
             Files.copy(in, file.toPath());
+    }
+
+    /**
+     * 文件大小（单位字节）转换为友好值
+     *
+     * @param byteSize
+     * @return
+     */
+    public static String prettySize(long byteSize) {
+        int index = 0;
+        double size = byteSize;
+        while (size >= 1024) {
+            index++;
+            size /= 1024;
+        }
+        return size + UNITS[index];
     }
 }
 

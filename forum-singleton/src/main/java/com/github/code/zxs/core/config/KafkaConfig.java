@@ -1,6 +1,7 @@
 package com.github.code.zxs.core.config;
 
-import com.github.code.zxs.core.support.recoverer.DeadLetterRecoverer;
+import com.github.code.zxs.core.support.kafka.handler.MyRetryingBatchErrorHandler;
+import com.github.code.zxs.core.support.kafka.recoverer.DeadLetterRecoverer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -12,7 +13,6 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.ContainerProperties;
-import org.springframework.kafka.listener.RetryingBatchErrorHandler;
 import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
 
@@ -52,7 +52,7 @@ public class KafkaConfig {
     }
 
     /**
-     * 批量消费，自动提交offset，重试失败后仅打印错误日志，单次消费上限为500
+     * 批量消费，自动提交offset，重试失败后仅打印错误日志，单次消费上限为1000
      *
      * @return
      */
@@ -73,7 +73,7 @@ public class KafkaConfig {
         factory.setBatchListener(true);
 //        factory.setMessageConverter(new BatchMessagingMessageConverter(converter()));
         // 失败后重试1次，重试失败后打印日志
-        factory.setBatchErrorHandler(new RetryingBatchErrorHandler(new FixedBackOff(1000L, 1L), null));
+        factory.setBatchErrorHandler(new MyRetryingBatchErrorHandler(new FixedBackOff(1000L, 1L), null));
         return factory;
     }
 
@@ -91,12 +91,13 @@ public class KafkaConfig {
         configProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         configProps.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, (int) TimeUnit.MINUTES.toMillis(10));
 
+
         factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(configProps));
         //开启批量消费
         factory.setBatchListener(true);
 //        factory.setMessageConverter(new BatchMessagingMessageConverter(converter()));
         // 失败后重试1次，重试失败后进入死信队列
-        factory.setBatchErrorHandler(new RetryingBatchErrorHandler(new FixedBackOff(0L, 1L), new DeadLetterRecoverer(template)));
+        factory.setBatchErrorHandler(new MyRetryingBatchErrorHandler(new FixedBackOff(0L, 1L), new DeadLetterRecoverer(template)));
         // 每消费一次，就提交一次offset
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         return factory;
@@ -122,7 +123,7 @@ public class KafkaConfig {
         factory.setBatchListener(true);
 //        factory.setMessageConverter(new BatchMessagingMessageConverter(converter()));
         // 失败后重试1次，重试失败后进入死信队列
-        factory.setBatchErrorHandler(new RetryingBatchErrorHandler(new FixedBackOff(0L, 1L), new DeadLetterRecoverer(template)));
+        factory.setBatchErrorHandler(new MyRetryingBatchErrorHandler(new FixedBackOff(0L, 1L), new DeadLetterRecoverer(template)));
         // 每消费一次，就提交一次offset
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         return factory;

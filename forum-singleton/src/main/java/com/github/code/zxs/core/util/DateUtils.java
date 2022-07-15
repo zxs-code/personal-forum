@@ -4,8 +4,7 @@ package com.github.code.zxs.core.util;
 import cn.hutool.core.date.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
@@ -16,7 +15,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class DateUtils extends DateUtil {
 
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final String BASIC_DATE = "yyyy-MM-dd HH:mm:ss";
+    public static final String ZONED_DATE = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     public static Date ZonedDateTimeToDate(ZonedDateTime dateTime) {
         return Date.from(dateTime.toInstant());
@@ -24,6 +24,10 @@ public class DateUtils extends DateUtil {
 
     public static ZonedDateTime DateToZonedDateTime(Date date) {
         return ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+    }
+
+    public static LocalDateTime DateToLocalDateTime(Date date) {
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 
     public static ZonedDateTime DateToZonedDateTime(Date date, ZoneId zoneId) {
@@ -86,22 +90,16 @@ public class DateUtils extends DateUtil {
         return StringUtils.join(separator, year, month, dayOfMonth);
     }
 
-    public static Date parseDate(String dateStr, String format) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-        try {
-            return dateFormat.parse(dateStr);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("时间解析错误，时间:" + dateStr + " format:" + format, e);
-        }
+
+    public static Date parseBasicDate(String dateStr) {
+        return parse(dateStr, BASIC_DATE);
     }
 
-    public static Date parseDate(String dateStr) {
-        try {
-            return dateFormat.parse(dateStr);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("时间解析错误，时间:" + dateStr + " format:" + dateFormat, e);
-        }
+    public static Date parseZonedDate(String dateStr) {
+        return parse(dateStr, ZONED_DATE);
     }
 
-
+    public static String formatZonedDate(Date date) {
+        return format(date, ZONED_DATE);
+    }
 }

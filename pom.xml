@@ -8,13 +8,7 @@
     <artifactId>personal-forum</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>forum-core</module>
-        <module>basic-authorize</module>
-        <module>forum-search</module>
-        <module>basic-storage</module>
-        <module>forum-resource</module>
         <module>forum-singleton</module>
-        <module>field-data</module>
     </modules>
     <packaging>pom</packaging>
 

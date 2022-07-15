@@ -27,7 +27,6 @@ import com.github.code.zxs.resource.service.biz.base.UserInfoService;
 import com.github.code.zxs.resource.service.manager.PostsDataManager;
 import com.github.code.zxs.resource.service.manager.PostsManager;
 import com.github.code.zxs.resource.service.manager.PostsStateManager;
-import com.github.code.zxs.search.service.manager.SearchManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,8 +56,6 @@ public class PostsServiceImpl implements PostsService {
     private UserInfoService userInfoService;
     @Autowired
     private MessageProducer producer;
-    @Autowired
-    private SearchManager searchManager;
     @Autowired
     private PostsMapper postsMapper;
 

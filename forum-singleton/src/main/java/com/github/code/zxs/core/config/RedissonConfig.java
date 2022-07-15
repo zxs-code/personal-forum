@@ -1,11 +1,9 @@
 package com.github.code.zxs.core.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.StringCodec;
 import org.redisson.config.Config;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,9 +22,6 @@ public class RedissonConfig {
 
     @Value("${spring.redis.database}")
     String database;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Bean
     public RedissonClient redissonClient() {

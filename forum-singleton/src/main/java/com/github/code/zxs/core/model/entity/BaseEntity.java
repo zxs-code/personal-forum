@@ -7,13 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class BaseEntity implements Identity{
+public abstract class BaseEntity implements Identity, Serializable {
     /**
      * 创建人id
      */

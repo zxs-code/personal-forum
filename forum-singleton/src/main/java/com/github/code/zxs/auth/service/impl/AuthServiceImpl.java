@@ -49,12 +49,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Date loginExpireAt(Long userId) {
-        long expire = StpUtil.stpLogic.getTokenTimeoutByLoginId(userId);
-        return DateUtils.plus(new Date(), expire, TimeUnit.SECONDS);
-    }
-
-    @Override
     @Transactional
     public void register(UserRegisterDTO userRegisterDTO) {
         if (authService.existUsername(userRegisterDTO.getUsername()))
@@ -79,11 +73,6 @@ public class AuthServiceImpl implements AuthService {
         session.set("username", user.getUsername());
         session.set("registerTime", user.getCreateTime());
         return StpUtil.getTokenInfo();
-    }
-
-    @Override
-    public boolean isLogin() {
-        return StpUtil.isLogin();
     }
 
     @Override

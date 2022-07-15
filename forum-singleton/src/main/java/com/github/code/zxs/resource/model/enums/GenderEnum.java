@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.github.code.zxs.core.model.enums.BaseEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.core.convert.converter.Converter;
 
 @Getter
 @AllArgsConstructor
@@ -20,5 +21,15 @@ public enum GenderEnum implements BaseEnum {
     @JsonCreator
     public static GenderEnum valueOf(int code) {
         return BaseEnum.valueOf(GenderEnum.class, code);
+    }
+
+    public enum IntegerToEnumConverter implements Converter<Integer, GenderEnum> {
+
+        INSTANCE;
+
+        @Override
+        public GenderEnum convert(Integer code) {
+            return GenderEnum.valueOf(code);
+        }
     }
 }

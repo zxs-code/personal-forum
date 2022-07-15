@@ -31,6 +31,7 @@ public class LogEnhanceFilter implements Filter {
             //放入链路跟踪id
             MDC.put(TRACE_ID, traceId);
             filterChain.doFilter(servletRequest, servletResponse);
+//            servletResponse.getWriter().println();
         } catch (Exception e) {
             log.error("日志增强过滤器", e);
         } finally {

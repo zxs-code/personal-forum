@@ -106,15 +106,15 @@ public class PostsDocument implements Searchable {
     private List<String> tags;
 
     @Field(name = "create_time", type = FieldType.Date, format = DateFormat.custom,
-            pattern = "yyyy-MM-dd HH:mm:ss || epoch_millis")
+            pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ || epoch_millis")
     private Date createTime;
 
     @Field(name = "update_time", type = FieldType.Date, format = DateFormat.custom,
-            pattern = "yyyy-MM-dd HH:mm:ss || epoch_millis")
+            pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ || epoch_millis")
     private Date updateTime;
 
     @Field(name = "delete_time", type = FieldType.Date, format = DateFormat.custom,
-            pattern = "yyyy-MM-dd HH:mm:ss || epoch_millis")
+            pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ || epoch_millis")
     private Date deleteTime;
 
     @Field(name = "create_by", type = FieldType.Long)

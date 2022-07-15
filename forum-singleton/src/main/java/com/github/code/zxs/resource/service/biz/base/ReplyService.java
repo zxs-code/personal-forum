@@ -17,4 +17,6 @@ public interface ReplyService {
     ReplyDataBO rangeDialog(DialogViewDTO replyViewDTO);
 
     List<ReplyBO> listReply(long commentId, long start, long end);
+
+    ReplyBO getReplyDetail(Long replyId);
 }

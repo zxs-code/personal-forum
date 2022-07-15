@@ -22,7 +22,7 @@ public class PostsConsumer {
     @Autowired
     private PostsDataManager postsDataManager;
 
-    private ResourceUniqueVisitorCounter uvCounter;
+    private final ResourceUniqueVisitorCounter uvCounter;
 
     public PostsConsumer(RedisTemplate<String, Object> redisTemplate) {
         this.uvCounter = new ResourceUniqueVisitorCounter(redisTemplate, ResourceTypeEnum.POSTS);

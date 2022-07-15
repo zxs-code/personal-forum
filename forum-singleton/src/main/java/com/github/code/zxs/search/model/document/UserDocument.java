@@ -53,7 +53,7 @@ public class UserDocument implements Searchable {
     @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String nickname;
     /**
-     * 性别
+     * 性别，枚举需要自己写转换器
      */
     @Field(type = FieldType.Integer)
     private GenderEnum gender;
@@ -61,7 +61,7 @@ public class UserDocument implements Searchable {
      * 出生年月
      */
     @Field(type = FieldType.Date, format = DateFormat.custom,
-            pattern = "yyyy-MM-dd HH:mm:ss || epoch_millis")
+            pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ || epoch_millis")
     private Date birthday;
     /**
      * 个性签名

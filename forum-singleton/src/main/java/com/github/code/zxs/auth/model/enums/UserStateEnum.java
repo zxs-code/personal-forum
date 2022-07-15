@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.github.code.zxs.core.model.enums.BaseEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.core.convert.converter.Converter;
 
 @AllArgsConstructor
 @Getter
@@ -24,5 +25,15 @@ public enum UserStateEnum implements BaseEnum {
     @Override
     public int getCode() {
         return 0;
+    }
+
+    public enum IntegerToEnumConverter implements Converter<Integer, UserStateEnum> {
+
+        INSTANCE;
+
+        @Override
+        public UserStateEnum convert(Integer code) {
+            return UserStateEnum.valueOf(code);
+        }
     }
 }

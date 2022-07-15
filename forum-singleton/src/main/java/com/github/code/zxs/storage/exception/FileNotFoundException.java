@@ -1,12 +1,19 @@
 package com.github.code.zxs.storage.exception;
 
 import com.github.code.zxs.core.exception.BaseException;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.github.code.zxs.core.model.enums.ResponseStatusEnum;
+import lombok.Getter;
 
-@Data
-@NoArgsConstructor
+@Getter
 public class FileNotFoundException extends BaseException {
-    private String key;
     private String path;
+
+    public FileNotFoundException(String message, String path) {
+        super(ResponseStatusEnum.FILE_NOT_FOUND.getCode(), message);
+        this.path = path;
+    }
+
+    public FileNotFoundException(String path) {
+        this(ResponseStatusEnum.FILE_NOT_FOUND.getMsg(), path);
+    }
 }

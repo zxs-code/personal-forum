@@ -14,9 +14,11 @@ public enum ResponseStatusEnum {
     LOGIN_FAIL(1003, "用户名或密码错误"),
     FORBIDDEN(1004, "无权限访问,请联系管理员"),
     FILE_UPLOAD_FAIL(1005, "文件上传失败"),
-    UNSUPPORTED_FILE_TYPE(1006, "不支持该文件类型"),
-    REQUEST_FREQUENCY(1007, "访问过于频繁，请稍后再试");
+    FILE_NOT_FOUND(1006,"文件未找到"),
+    UNSUPPORTED_FILE_TYPE(1007, "不支持该文件类型"),
+    REQUEST_FREQUENCY(1008, "访问过于频繁，请稍后再试"),
+    FILE_SIZE_LIMIT(1009,"上传的文件大小不能超过限制");
 
-    private int code;
-    private String msg;
+    private final int code;
+    private final String msg;
 }

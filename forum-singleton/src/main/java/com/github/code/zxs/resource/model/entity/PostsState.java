@@ -7,12 +7,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @TableName("tb_posts_state")
-public class PostsState implements Identity {
+public class PostsState implements Identity, Serializable {
     private Long id;
     /**
      * 是否置顶

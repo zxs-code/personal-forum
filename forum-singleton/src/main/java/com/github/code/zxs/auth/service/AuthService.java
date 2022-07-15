@@ -7,20 +7,15 @@ import com.github.code.zxs.auth.model.enums.AccountType;
 import com.github.code.zxs.auth.model.enums.VerifyType;
 import com.github.code.zxs.auth.model.vo.UserLoginDTO;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public interface AuthService {
 
     UserBO getUserBO(Long userId);
 
-    Date loginExpireAt(Long userId);
-
     void register(UserRegisterDTO userRegisterDTO);
 
     SaTokenInfo login(UserLoginDTO userLoginDTO);
-
-    boolean isLogin();
 
     void logout();
 

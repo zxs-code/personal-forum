@@ -45,14 +45,14 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public UserInfoBO getMyInfo() {
         Long userId = UserContext.getId();
+        if (userId == null)
+            return null;
         UserInfo userInfo = userInfoManager.getUserInfoById(userId);
         if (userInfo == null)
             userInfo = insertDefaultUserInfo(userId);
         UserBO userBO = authService.getUserBO(userId);
 
         UserInfoBO userInfoBO = userInfoConverter.entityToBo(userInfo, userBO);
-
-        userInfoBO.setExpireAt(authService.loginExpireAt(userId));
         return userInfoBO;
     }
 

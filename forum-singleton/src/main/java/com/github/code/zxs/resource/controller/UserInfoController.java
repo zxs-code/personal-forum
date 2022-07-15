@@ -15,19 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("user/info")
+@RequestMapping("user")
 public class UserInfoController {
     @Autowired
     private UserInfoService userInfoService;
     @Autowired
     private HistoryService historyService;
 
-    @SaCheckLogin
     @GetMapping("myInfo")
     public UserInfoBO getMyInfo() {
         return userInfoService.getMyInfo();
     }
 
+    @SaCheckLogin
     @PutMapping("myInfo")
     public void saveMyInfo(@RequestBody UserInfoSaveDTO userInfoSaveDTO) {
         userInfoService.saveMyInfo(userInfoSaveDTO);
@@ -41,7 +41,7 @@ public class UserInfoController {
     @DeleteMapping("history/{id}")
     public void deleteHistory(@PathVariable Long id) {
         historyService.remove(new LambdaQueryWrapper<History>()
-                .eq(History::getCreateBy, UserContext.getId())
+                .eq(History::getUserId, UserContext.getId())
                 .eq(History::getId, id)
         );
     }
@@ -49,7 +49,7 @@ public class UserInfoController {
     @DeleteMapping("history")
     public void deleteHistory() {
         historyService.remove(new LambdaQueryWrapper<History>()
-                .eq(History::getCreateBy, UserContext.getId())
+                .eq(History::getUserId, UserContext.getId())
         );
     }
 }

@@ -28,8 +28,8 @@ public class HistoryServiceImpl extends ServiceImpl<HistoryMapper, History> impl
     public PageResult<HistoryBO> pageHistory(PageDTO pageDTO) {
         Page<History> historyPage = baseMapper.selectPage(Page.of(pageDTO.getCurPage(), pageDTO.getPageSize()),
                 new LambdaQueryWrapper<History>()
-                        .eq(History::getCreateBy, UserContext.getId())
-                        .orderByDesc(History::getCreateTime)
+                        .eq(History::getUserId, UserContext.getId())
+                        .orderByDesc(History::getViewTime)
         );
         List<History> records = historyPage.getRecords();
         List<HistoryBO> result = records.stream().map(e -> {
@@ -47,7 +47,7 @@ public class HistoryServiceImpl extends ServiceImpl<HistoryMapper, History> impl
                 .eq(History::getResourceId, history.getResourceId())
         )) {
             History update = new History();
-            update.setUpdateTime(new Date());
+            update.setViewTime(new Date());
             baseMapper.update(update, new LambdaQueryWrapper<History>()
                     .eq(History::getResourceType, history.getResourceType())
                     .eq(History::getResourceId, history.getResourceId()));

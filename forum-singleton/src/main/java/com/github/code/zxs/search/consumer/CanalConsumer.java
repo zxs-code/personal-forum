@@ -5,6 +5,7 @@ import com.github.code.zxs.core.constant.MysqlTypeConstant;
 import com.github.code.zxs.core.constant.TopicConstant;
 import com.github.code.zxs.core.model.bean.CanalBean;
 import com.github.code.zxs.core.util.CollectionUtils;
+import com.github.code.zxs.core.util.DateUtils;
 import com.github.code.zxs.core.util.JsonUtils;
 import com.github.code.zxs.core.util.StringUtils;
 import com.github.code.zxs.resource.model.entity.Posts;
@@ -103,6 +104,7 @@ public class CanalConsumer {
 
     /**
      * 处理帖子的标签和概要
+     *
      * @param posts
      */
     private void processPostsBody(Document posts) {
@@ -172,12 +174,12 @@ public class CanalConsumer {
                         entry.setValue(Double.parseDouble(value));
                         break;
                     case Types.BOOLEAN:
-                        entry.setValue("0".equals(value));
+                        entry.setValue("1".equals(value));
                         break;
-//                    case Types.DATE:
-//                    case Types.TIMESTAMP:
-//                        entry.setValue(DateUtils.parseDate(value).getTime());
-//                        break;
+                    case Types.DATE:
+                    case Types.TIMESTAMP:
+                        entry.setValue(DateUtils.formatZonedDate(DateUtils.parseBasicDate(value)));
+                        break;
                 }
             }
     }

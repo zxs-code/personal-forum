@@ -11,13 +11,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldNameConstants
 @TableName("tb_posts_data")
-public class PostsData implements Identity {
+public class PostsData implements Identity, Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;
     /**

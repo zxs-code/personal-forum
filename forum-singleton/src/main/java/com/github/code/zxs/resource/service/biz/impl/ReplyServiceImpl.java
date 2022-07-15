@@ -6,6 +6,7 @@ import com.github.code.zxs.core.constant.TopicConstant;
 import com.github.code.zxs.core.exception.UserEventException;
 import com.github.code.zxs.core.model.enums.ResourceTypeEnum;
 import com.github.code.zxs.core.support.message.MessageProducer;
+import com.github.code.zxs.core.util.CollectionUtils;
 import com.github.code.zxs.resource.converter.ReplyConverter;
 import com.github.code.zxs.resource.model.bo.AuthorBO;
 import com.github.code.zxs.resource.model.bo.ReplyBO;
@@ -100,6 +101,12 @@ public class ReplyServiceImpl implements ReplyService {
     public List<ReplyBO> listReply(long commentId, long start, long end) {
         List<Reply> replies = replyManager.listReply(commentId, start, end);
         return wrapperReply(replies);
+    }
+
+    @Override
+    public ReplyBO getReplyDetail(Long replyId) {
+        Reply reply = replyManager.getById(replyId);
+        return wrapperReply(CollectionUtils.asList(reply)).get(0);
     }
 
     private List<ReplyBO> wrapperReply(List<Reply> replies) {

@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,6 +38,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @CacheConfig(cacheNames = "file-service")
 public class LocalFileService extends AbstractFileService {
+
+    public static final int FILE_NAME_MAX_LENGTH = 64;
 
     @Autowired
     private LocalStorageConfig localStorageConfig;
@@ -55,6 +58,10 @@ public class LocalFileService extends AbstractFileService {
                 //构造DTO对象
                 String key = UUIDUtils.randomUUID();
                 String originName = multipartFile.getOriginalFilename();
+                //源文件名超过最大长度时截断
+                if (originName != null && originName.length() > FILE_NAME_MAX_LENGTH)
+                    originName = originName.substring(originName.length() - FILE_NAME_MAX_LENGTH);
+
                 String suffix = FileUtils.getSuffix(originName);
                 Date date = new Date();
                 String path = localStorageConfig.getBasePathWithDate(date) + key + suffix;
@@ -95,6 +102,8 @@ public class LocalFileService extends AbstractFileService {
             log.info("{}-{}上传文件{}", UserContext.getId(), UserContext.getUsername(),
                     fileItemDTOSs.stream().map(FileItemDTO::getName).collect(Collectors.toList()));
             return fileItemDTOSs;
+        } catch (IOException e) {
+            throw new FileUploadException(multipartFiles, e);
         } catch (Exception e) {
             log.error("{}-{}上传文件失败", UserContext.getId(), UserContext.getUsername(), e);
             try {
@@ -104,11 +113,7 @@ public class LocalFileService extends AbstractFileService {
             } catch (Exception e1) {
                 log.error("{}-{}文件回档失败", UserContext.getId(), UserContext.getUsername(), e1);
             }
-            //不能直接抛出
-            if (e instanceof BaseException)
-                throw new BaseException(((BaseException) e).getCode(), e.getMessage());
-            else
-                throw new FileUploadException(ResponseStatusEnum.FILE_UPLOAD_FAIL);
+            throw e;
         }
     }
 
@@ -117,7 +122,7 @@ public class LocalFileService extends AbstractFileService {
     public FileItemDTO download(String key) {
         FileItemDTO fileItemDTO = Optional.ofNullable(fileMapper.selectById(key))
                 .map(FileItem::toFileItemDTO)
-                .orElseThrow(FileNotFoundException::new);
+                .orElseThrow(() -> new FileNotFoundException(key));
         File file = new File(fileItemDTO.getPath());
         if (!file.exists())
             throw new BaseException(ResponseStatusEnum.NOT_FOUND);
@@ -133,7 +138,7 @@ public class LocalFileService extends AbstractFileService {
                 year, month, day, filename);
         File file = new File(path);
         if (!file.exists())
-            throw new BaseException(ResponseStatusEnum.NOT_FOUND);
+            throw new FileNotFoundException(StringUtils.join(LocalStorageConfig.SEPARATOR, year, month, day, filename));
         return file;
     }
 

@@ -227,18 +227,20 @@ public class RedisUtils {
      *
      * @return 对应的多个键值
      */
-    public static List<Map<String, Object>> hMultiEntries(List<String> keys) {
+    public static Map<String, Map<String, Object>> hMultiEntries(List<String> keys) {
         List<List<String>> lists = CollectionUtils.subList(keys, LIMIT);
-        List<Map<String, Object>> result = new ArrayList<>();
+        Map<String, Map<String, Object>> result = new HashMap<>();
         for (List<String> subList : lists) {
-            List<Object> list = redisTemplate.executePipelined(new SessionCallback() {
+            List<Object> entries = redisTemplate.executePipelined(new SessionCallback() {
                 @Override
                 public Object execute(RedisOperations operations) throws DataAccessException {
                     subList.forEach(key -> operations.opsForHash().entries(key));
                     return null;
                 }
             });
-            result.addAll(list.stream().map(m -> (Map<String, Object>) m).collect(Collectors.toList()));
+//            Map<String, Object> collect = subList.stream().collect(Collectors.toMap(key -> key, key -> entries.get(subList.indexOf(key))));
+            for (int i = 0; i < subList.size(); i++)
+                result.put(subList.get(i), (Map<String, Object>) entries.get(i));
         }
         return result;
     }
